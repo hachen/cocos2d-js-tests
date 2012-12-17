@@ -6,8 +6,8 @@
 
 STATE_PLAYING = 0;
 STATE_GAMEOVER = 1;
-MAX_CONTAINT_WIDTH = 40;
-MAX_CONTAINT_HEIGHT = 40;
+MAX_CONTAINT_WIDTH = 6;  //bullet collideRect
+MAX_CONTAINT_HEIGHT = 6;
 
 var g_sharedGameLayer;
 
@@ -83,6 +83,8 @@ var GameLayer = cc.Layer.extend({
             // ship
             this._ship = new Ship();
             this.addChild(this._ship, this._ship.zOrder, MW.UNIT_TAG.PLAYER);
+			var contantSize = this._ship.getContentSize();
+			this.checkMaxSize(contantSize.width, contantSize.height);
                                 
             // explosion batch node
             cc.SpriteFrameCache.getInstance().addSpriteFrames(s_explosion_plist);
@@ -371,6 +373,8 @@ GameLayer.scene = function () {
 };
 
 GameLayer.prototype.addEnemy = function (enemy,z,tag){
+	var contantSize = enemy.getContentSize();
+	this.checkMaxSize(contantSize.width, contantSize.height);
     this._enemyBatch.addChild(enemy,z,tag);
 };
 
@@ -389,3 +393,11 @@ GameLayer.prototype.addSpark = function (spark) {
 GameLayer.prototype.addBullet = function (bullet, zOrder ,mode) {
 	this._bullets.addChild(bullet, zOrder, mode);
 };
+
+GameLayer.prototype.checkMaxSize = function(objectWidth, objectHeight) {
+	if(MAX_CONTAINT_HEIGHT * 0.5 < objectHeight)
+		MAX_CONTAINT_HEIGHT = objectHeight * 2;
+
+	if(MAX_CONTAINT_WIDTH * 0.5 < objectWidth)
+		MAX_CONTAINT_WIDTH = objectWidth * 2;
+}
